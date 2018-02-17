@@ -1,6 +1,23 @@
 <HTML>
 <HEAD>
 <TITLE>Javascript Winamp</TITLE>
+<style>
+.level0 {
+    z-index: -1;
+}
+.level1 {
+    z-index: 0;
+}
+.level2 {
+    z-index: 1;
+}
+.level3 {
+    z-index: 2;
+}
+.custom-draw {
+    position: absolute;
+}
+</style>
 <SCRIPT LANGUAGE=JAVASCRIPT>
 /*******************************************************************\
 *                      Winamp2x for Javascript                     *
@@ -119,13 +136,13 @@ function setUp() {
     dButton.onmouseout = new Function('if (buttonPressed) {changeImage("dButton",((zoom == 2)? 329:305),((zoom == 2)? 70:26),9,7,11,48);restoreText()}')
     var textOutput = ""
     for (var sue = 0; sue <= 30; sue++) {
-        textOutput += "<IMG ID=\"staticmsgLetter_" + sue + "\" STYLE=\"z-index:0;position:absolute\">"
+        textOutput += "<IMG ID=\"staticmsgLetter_" + sue + "\" class=\"custom-draw level1\">"
     }
     staticmsg.innerHTML = textOutput;
     textOutput = "";
     for (var sue = 0; sue <= 30; sue++) {
         changeImage("staticmsgLetter_" + sue, 0, 0, 0, 0, sue * 5, 0, "TEXT.BMP")
-        textOutput += "<IMG ID=\"staticbaseLetter_" + sue + "\" STYLE=\"z-index:0;position:absolute\">"
+        textOutput += "<IMG ID=\"staticbaseLetter_" + sue + "\" class=\"custom-draw level1\">"
     }
     staticbase.innerHTML = textOutput;
     textOutput = "";
@@ -755,80 +772,80 @@ function grabFile() {
 </SCRIPT>
 </HEAD>
 <BODY onLoad="setUp()" onDrag="return(false)" STYLE="overflow:hidden" onMouseUp="document.onRelease();document.onRelease = new Function('')">
-<DIV STYLE="position:absolute;top:0px;left:0px;visibility:hidden;display:none">
+<DIV class="custom-draw" STYLE="top:0px;left:0px;visibility:hidden;display:none">
 <audio src="about:blank" ID="playerobj" WIDTH="0" HEIGHT="0" autoplay="false"></audio>
 <FORM><INPUT TYPE=FILE ID="filegrabber"><INPUT TYPE=RESET ID="filegrabreset"></FORM>
 </DIV>
-<DIV STYLE="width:275px;height:116px;position:absolute;top:0px;left:0px;visibility:hidden;zoom:100%" ID="player">
-<IMG STYLE="position:absolute;z-index:1" ID="titlebarplayer">
-<IMG STYLE="position:absolute;z-index:2" ID="sysmenuplayer" TITLE="Winamp Menu (Disabled)">
-<IMG STYLE="position:absolute;z-index:2" ID="minimizeplayer" TITLE="Minimize (Disabled)">
-<IMG STYLE="position:absolute;z-index:2" ID="shadeplayer" TITLE="Toggle Windowshade Mode">
-<IMG STYLE="position:absolute;z-index:2" ID="closeplayer" TITLE="Close (Disabled)">
-<DIV STYLE="postion:absolute;top:0px;left:0px;visibility:hidden" ID="smallsection">
-<DIV STYLE="height:11px;width:68px;position:absolute;top:4px;left:127px;z-index:2" onMouseDown="elapsedDisplay = !elapsedDisplay;updateAudio()">
-<IMG STYLE="position:absolute;z-index:2" ID="shadedLetter_0">
-<IMG STYLE="position:absolute;z-index:2" ID="shadedLetter_1">
-<IMG STYLE="position:absolute;z-index:2" ID="shadedLetter_2">
-<IMG STYLE="position:absolute;z-index:2" ID="shadedLetter_4">
-<IMG STYLE="position:absolute;z-index:2" ID="shadedLetter_5">
+<DIV class="custom-draw" STYLE="width:275px;height:116px;top:0px;left:0px;visibility:hidden;zoom:100%" ID="player">
+<IMG class="custom-draw level2" ID="titlebarplayer">
+<IMG class="custom-draw level3" ID="sysmenuplayer" TITLE="Winamp Menu (Disabled)">
+<IMG class="custom-draw level3" ID="minimizeplayer" TITLE="Minimize (Disabled)">
+<IMG class="custom-draw level3" ID="shadeplayer" TITLE="Toggle Windowshade Mode">
+<IMG class="custom-draw level3" ID="closeplayer" TITLE="Close (Disabled)">
+<DIV class="custom-draw" STYLE="top:0px;left:0px;visibility:hidden" ID="smallsection">
+<DIV class="custom-draw level3" STYLE="height:11px;width:68px;top:4px;left:127px;" onMouseDown="elapsedDisplay = !elapsedDisplay;updateAudio()">
+<IMG class="custom-draw level3" ID="shadedLetter_0">
+<IMG class="custom-draw level3" ID="shadedLetter_1">
+<IMG class="custom-draw level3" ID="shadedLetter_2">
+<IMG class="custom-draw level3" ID="shadedLetter_4">
+<IMG class="custom-draw level3" ID="shadedLetter_5">
 </DIV>
-<DIV STYLE="height:7px;width:17px;position:absolute;top:4px;left:226px;z-index:1">
-<IMG STYLE="position:absolute;z-index:1" ID="posbarshaded">
-<IMG STYLE="position:absolute;z-index:2;visibility:hidden" ID="seekershaded">
+<DIV class="custom-draw level2" STYLE="height:7px;width:17px;top:4px;left:226px;">
+<IMG class="custom-draw level2" ID="posbarshaded">
+<IMG class="custom-draw level3" STYLE="visibility:hidden" ID="seekershaded">
 </DIV>
-<IMG STYLE="position:absolute;z-index:2" ID="backshaded">
-<IMG STYLE="position:absolute;z-index:2" ID="playshaded">
-<IMG STYLE="position:absolute;z-index:2" ID="pauseshaded">
-<IMG STYLE="position:absolute;z-index:2" ID="stopshaded">
-<IMG STYLE="position:absolute;z-index:2" ID="nextshaded">
-<IMG STYLE="position:absolute;z-index:2" ID="ejectshaded">
+<IMG class="custom-draw level3" ID="backshaded">
+<IMG class="custom-draw level3" ID="playshaded">
+<IMG class="custom-draw level3" ID="pauseshaded">
+<IMG class="custom-draw level3" ID="stopshaded">
+<IMG class="custom-draw level3" ID="nextshaded">
+<IMG class="custom-draw level3" ID="ejectshaded">
 </DIV>
-<DIV STYLE="postion:absolute;top:0px;left:0px" ID="largesection">
-<DIV STYLE="width:50px;height:20px;position:absolute;top:30px;left:200px;z-index:0" ID="songinfo"></DIV>
-<DIV STYLE="height:10px;width:247px;position:absolute;top:72px;left:16px;z-index:0" TITLE="Seeking Bar">
-<IMG STYLE="position:absolute;z-index:1" ID="posbar">
-<IMG STYLE="position:absolute;z-index:2;visibility:hidden" ID="seeker">
+<DIV class="custom-draw" STYLE="top:0px;left:0px" ID="largesection">
+<DIV class="custom-draw level1" STYLE="width:50px;height:20px;top:30px;left:200px" ID="songinfo"></DIV>
+<DIV class="custom-draw level1" STYLE="height:10px;width:247px;top:72px;left:16px" TITLE="Seeking Bar">
+<IMG class="custom-draw level2" ID="posbar">
+<IMG class="custom-draw level3" STYLE="visibility:hidden" ID="seeker">
 </DIV>
-<DIV STYLE="height:11px;width:68px;position:absolute;top:57px;left:107px;z-index:0" TITLE="Volume Bar">
-<IMG STYLE="position:absolute;z-index:0" ID="volumeback">
-<IMG STYLE="position:absolute;z-index:1" ID="volumeslider">
+<DIV class="custom-draw level1" STYLE="height:11px;width:68px;top:57px;left:107px" TITLE="Volume Bar">
+<IMG class="custom-draw level1" ID="volumeback">
+<IMG class="custom-draw level2" ID="volumeslider">
 </DIV>
-<DIV STYLE="height:11px;width:68px;position:absolute;top:57px;left:177px;z-index:0" TITLE="Panning Bar">
-<IMG STYLE="position:absolute;z-index:0" ID="balanceback">
-<IMG STYLE="position:absolute;z-index:1" ID="balanceslider">
+<DIV class="custom-draw level1" STYLE="height:11px;width:68px;top:57px;left:177px" TITLE="Panning Bar">
+<IMG class="custom-draw level1" ID="balanceback">
+<IMG class="custom-draw level2" ID="balanceslider">
 
 </DIV>
-<DIV STYLE="width:155px;height:6px;position:absolute;top:27px;left:111px;z-index:0;font-size:0;clip:rect(0px 154px 6px 0px);visibility:hidden" ID="staticmsg" TITLE="Song Title"></DIV>
-<DIV STYLE="width:155px;height:6px;position:absolute;top:27px;left:111px;z-index:0;font-size:0;clip:rect(0px 154px 6px 0px);visibility:hidden" ID="staticbase" TITLE="Song Title"></DIV>
-<DIV STYLE="width:65px;height:13px;position:absolute;top:26px;left:38px;z-index:0" ID="songtime" TITLE="Time Display (click to toggle elapsed/remaining)" onMouseDown="elapsedDisplay = !elapsedDisplay;updateAudio()">
-<IMG STYLE="position:absolute;z-index:0" ID="numberpre">
-<IMG STYLE="position:absolute;z-index:0" ID="numbermin1">
-<IMG STYLE="position:absolute;z-index:0" ID="numbermin2">
-<IMG STYLE="position:absolute;z-index:0" ID="numbersec1">
-<IMG STYLE="position:absolute;z-index:0" ID="numbersec2">
+<DIV class="custom-draw level1" STYLE="width:155px;height:6px;top:27px;left:111px;font-size:0;clip:rect(0px 154px 6px 0px);visibility:hidden" ID="staticmsg" TITLE="Song Title"></DIV>
+<DIV class="custom-draw level1" STYLE="width:155px;height:6px;top:27px;left:111px;font-size:0;clip:rect(0px 154px 6px 0px);visibility:hidden" ID="staticbase" TITLE="Song Title"></DIV>
+<DIV class="custom-draw level1" STYLE="width:65px;height:13px;top:26px;left:38px" ID="songtime" TITLE="Time Display (click to toggle elapsed/remaining)" onMouseDown="elapsedDisplay = !elapsedDisplay;updateAudio()">
+<IMG class="custom-draw level1" ID="numberpre">
+<IMG class="custom-draw level1" ID="numbermin1">
+<IMG class="custom-draw level1" ID="numbermin2">
+<IMG class="custom-draw level1" ID="numbersec1">
+<IMG class="custom-draw level1" ID="numbersec2">
 </DIV>
-<IMG WIDTH="275" HEIGHT="116" STYLE="position:absolute;top:0px;left:0px;z-index:-1" ID="mainbg" GALLERYIMG=NO>
-<IMG STYLE="position:absolute;z-index:0" ID="previous" TITLE="Previous Track (Disabled)">
-<IMG STYLE="position:absolute;z-index:0" ID="play" TITLE="Play">
-<IMG STYLE="position:absolute;z-index:0" ID="pause" TITLE="Pause">
-<IMG STYLE="position:absolute;z-index:0" ID="stop" TITLE="Stop">
-<IMG STYLE="position:absolute;z-index:0" ID="next" TITLE="Next Track (Disabled)">
-<IMG STYLE="position:absolute;z-index:0" ID="eject" TITLE="Open file">
-<IMG STYLE="position:absolute;z-index:0" ID="equalizerToggle" TITLE="Toggle Graphical Equalizer (Disabled)">
-<IMG STYLE="position:absolute;z-index:0" ID="playlistToggle" TITLE="Toggle Playlist Editor (Disabled)">
-<IMG STYLE="position:absolute;z-index:0" ID="repeatToggle">
-<IMG STYLE="position:absolute;z-index:0" ID="shuffleToggle">
-<IMG STYLE="position:absolute;z-index:0" ID="oButton">
-<IMG STYLE="position:absolute;z-index:0" ID="aButton">
-<IMG STYLE="position:absolute;z-index:0" ID="iButton">
-<IMG STYLE="position:absolute;z-index:0" ID="dButton">
-<IMG STYLE="position:absolute;z-index:0" ID="vButton">
-<IMG STYLE="position:absolute;z-index:0" ID="stereochange">
-<IMG STYLE="position:absolute;z-index:0" ID="monochange">
-<IMG STYLE="position:absolute;z-index:0" ID="audiodetail">
-<IMG STYLE="position:absolute;z-index:0" ID="audiodetail2">
-<IMG STYLE="position:absolute;z-index:0" ID="creditsbutton" GALLERYIMG=NO>
+<IMG WIDTH="275" HEIGHT="116" class="custom-draw level0" STYLE="top:0px;left:0px;" ID="mainbg" GALLERYIMG=NO>
+<IMG class="custom-draw level1" ID="previous" TITLE="Previous Track (Disabled)">
+<IMG class="custom-draw level1" ID="play" TITLE="Play">
+<IMG class="custom-draw level1" ID="pause" TITLE="Pause">
+<IMG class="custom-draw level1" ID="stop" TITLE="Stop">
+<IMG class="custom-draw level1" ID="next" TITLE="Next Track (Disabled)">
+<IMG class="custom-draw level1" ID="eject" TITLE="Open file">
+<IMG class="custom-draw level1" ID="equalizerToggle" TITLE="Toggle Graphical Equalizer (Disabled)">
+<IMG class="custom-draw level1" ID="playlistToggle" TITLE="Toggle Playlist Editor (Disabled)">
+<IMG class="custom-draw level1" ID="repeatToggle">
+<IMG class="custom-draw level1" ID="shuffleToggle">
+<IMG class="custom-draw level1" ID="oButton">
+<IMG class="custom-draw level1" ID="aButton">
+<IMG class="custom-draw level1" ID="iButton">
+<IMG class="custom-draw level1" ID="dButton">
+<IMG class="custom-draw level1" ID="vButton">
+<IMG class="custom-draw level1" ID="stereochange">
+<IMG class="custom-draw level1" ID="monochange">
+<IMG class="custom-draw level1" ID="audiodetail">
+<IMG class="custom-draw level1" ID="audiodetail2">
+<IMG class="custom-draw level1" ID="creditsbutton" GALLERYIMG=NO>
 </DIV>
 </DIV>
 </BODY>
