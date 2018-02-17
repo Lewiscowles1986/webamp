@@ -1,24 +1,43 @@
-<HTML>
-<HEAD>
-<TITLE>Javascript Winamp</TITLE>
+<html>
+<head>
+<title>Javascript Winamp</title>
 <style>
 .level0 {
-    z-index: -1;
-}
-.level1 {
-    z-index: 0;
-}
-.level2 {
     z-index: 1;
 }
-.level3 {
+.level1 {
     z-index: 2;
+}
+.level2 {
+    z-index: 3;
+}
+.level3 {
+    z-index: 4;
 }
 .custom-draw {
     position: absolute;
 }
+.w68 {
+    width:68px;
+}
+.w155 {
+    width:155px;
+}
+#player {
+    width:275px;height:116px;position:absolute;top:0px;left:0px;zoom:1;
+}
+
+.hide {
+    visibility: hidden !important;
+}
+.nodisplay {
+    display: none;
+}
+.msgpos {
+    height:6px;top:27px;left:111px;font-size:0;clip:rect(0px 154px 6px 0px);
+}
 </style>
-<SCRIPT LANGUAGE=JAVASCRIPT>
+<script type="text/javascript">
 /*******************************************************************\
 *                      Winamp2x for Javascript                     *
 *                  Created by Max <hrkndr@msn.com>                 *
@@ -136,13 +155,13 @@ function setUp() {
     dButton.onmouseout = new Function('if (buttonPressed) {changeImage("dButton",((zoom == 2)? 329:305),((zoom == 2)? 70:26),9,7,11,48);restoreText()}')
     var textOutput = ""
     for (var sue = 0; sue <= 30; sue++) {
-        textOutput += "<IMG ID=\"staticmsgLetter_" + sue + "\" class=\"custom-draw level1\">"
+        textOutput += "<img id=\"staticmsgLetter_" + sue + "\" class=\"custom-draw level1\">"
     }
     staticmsg.innerHTML = textOutput;
     textOutput = "";
     for (var sue = 0; sue <= 30; sue++) {
         changeImage("staticmsgLetter_" + sue, 0, 0, 0, 0, sue * 5, 0, "TEXT.BMP")
-        textOutput += "<IMG ID=\"staticbaseLetter_" + sue + "\" class=\"custom-draw level1\">"
+        textOutput += "<img id=\"staticbaseLetter_" + sue + "\" class=\"custom-draw level1\">"
     }
     staticbase.innerHTML = textOutput;
     textOutput = "";
@@ -224,7 +243,9 @@ function setUp() {
     showMsg("javascript winamp", true)
     detailImage();
     updateAudio()
-    player.style.visibility = "visible"
+    
+    player.classList.remove('hide');
+    player.style = "left:0;top:0;";
     
     var audio = document.querySelector('#playerobj');
     var filegrabber = document.querySelector('#filegrabber');
@@ -260,15 +281,15 @@ function updateTitleStr() {
 
 function windowShade(returnLarge) {
     if (returnLarge) {
-        largesection.style.visibility = "visible";
-        smallsection.style.visibility = "hidden";
+        largesection.classList.remove('hide');
+        smallsection.classList.add('hide');
         shaded = false
         changeImage("titlebarplayer", 27, 0, 13, 275, 0, 0);
         changeImage("shadeplayer", 0, 18, 9, 9, 254, 3)
         updateAudio()
     } else {
-        largesection.style.visibility = "hidden";
-        smallsection.style.visibility = "visible";
+        largesection.classList.add('hide');
+        smallsection.classList.remove('hide');
         shaded = true
         changeImage("titlebarplayer", 27, 29, 14, 275, 0, 0);
         changeImage("shadeplayer", 0, 27, 9, 9, 254, 3)
@@ -492,11 +513,11 @@ function updateAudio() {
 
 function forwardText(isBase) {
     if (isBase) {
-        staticmsg.style.visibility = "hidden";
-        staticbase.style.visibility = "inherit"
+        staticmsg.classList.add('hide');
+        staticbase.classList.remove('hide');
     } else {
-        staticbase.style.visibility = "hidden";
-        staticmsg.style.visibility = "inherit"
+        staticmsg.classList.remove('hide');
+        staticbase.classList.add('hide');
     }
 }
 
@@ -612,7 +633,6 @@ function updateVolume(volumeChange) {
         volumeslider.scanLeft = volumeChange
         
         var desiredVolume = (100 / (51 / volumeChange));
-        //console.log('volume changed (%)', desiredVolume);
         
         playerobj.volume = desiredVolume/100; // decimal fraction volume...
         
@@ -740,19 +760,29 @@ function command(comm, data) {
             grabFile()
             break;
         case ("play"):
-            audio.play();            
-            
-            if (mode == "stop" || mode == "pause") {
-                mode = "play";
-                detailImage()
-                updateAudio();
-                audioTimer = setInterval("updateAudio()", 200)
-                seeker.style.visibility = "inherit";
-                seekershaded.style.visibility = "inherit"
+            if(audio.src.length > 4) {
+                audio.play();            
+                
+                if (mode == "stop" || mode == "pause") {
+                    mode = "play";
+                    detailImage()
+                    updateAudio();
+                    audioTimer = setInterval("updateAudio()", 200)
+                    seeker.classList.remove('hide');
+                    seekershaded.classList.remove('hide');
+                }
+            } else {
+                grabFile()
             }
             break;
         case ("pause"):
-            audio.pause();
+            if(!audio.paused) {
+                audio.pause();
+            } else {
+                if(audio.src.length > 4) {
+                    command('play');
+                }
+            }
             break;
         case ("stop"):
             audio.pause();
@@ -769,84 +799,84 @@ function grabFile() {
     filegrabber.click();
     
 }
-</SCRIPT>
-</HEAD>
-<BODY onLoad="setUp()" onDrag="return(false)" STYLE="overflow:hidden" onMouseUp="document.onRelease();document.onRelease = new Function('')">
-<DIV class="custom-draw" STYLE="top:0px;left:0px;visibility:hidden;display:none">
-<audio src="about:blank" ID="playerobj" WIDTH="0" HEIGHT="0" autoplay="false"></audio>
-<FORM><INPUT TYPE=FILE ID="filegrabber"><INPUT TYPE=RESET ID="filegrabreset"></FORM>
-</DIV>
-<DIV class="custom-draw" STYLE="width:275px;height:116px;top:0px;left:0px;visibility:hidden;zoom:100%" ID="player">
-<IMG class="custom-draw level2" ID="titlebarplayer">
-<IMG class="custom-draw level3" ID="sysmenuplayer" TITLE="Winamp Menu (Disabled)">
-<IMG class="custom-draw level3" ID="minimizeplayer" TITLE="Minimize (Disabled)">
-<IMG class="custom-draw level3" ID="shadeplayer" TITLE="Toggle Windowshade Mode">
-<IMG class="custom-draw level3" ID="closeplayer" TITLE="Close (Disabled)">
-<DIV class="custom-draw" STYLE="top:0px;left:0px;visibility:hidden" ID="smallsection">
-<DIV class="custom-draw level3" STYLE="height:11px;width:68px;top:4px;left:127px;" onMouseDown="elapsedDisplay = !elapsedDisplay;updateAudio()">
-<IMG class="custom-draw level3" ID="shadedLetter_0">
-<IMG class="custom-draw level3" ID="shadedLetter_1">
-<IMG class="custom-draw level3" ID="shadedLetter_2">
-<IMG class="custom-draw level3" ID="shadedLetter_4">
-<IMG class="custom-draw level3" ID="shadedLetter_5">
-</DIV>
-<DIV class="custom-draw level2" STYLE="height:7px;width:17px;top:4px;left:226px;">
-<IMG class="custom-draw level2" ID="posbarshaded">
-<IMG class="custom-draw level3" STYLE="visibility:hidden" ID="seekershaded">
-</DIV>
-<IMG class="custom-draw level3" ID="backshaded">
-<IMG class="custom-draw level3" ID="playshaded">
-<IMG class="custom-draw level3" ID="pauseshaded">
-<IMG class="custom-draw level3" ID="stopshaded">
-<IMG class="custom-draw level3" ID="nextshaded">
-<IMG class="custom-draw level3" ID="ejectshaded">
-</DIV>
-<DIV class="custom-draw" STYLE="top:0px;left:0px" ID="largesection">
-<DIV class="custom-draw level1" STYLE="width:50px;height:20px;top:30px;left:200px" ID="songinfo"></DIV>
-<DIV class="custom-draw level1" STYLE="height:10px;width:247px;top:72px;left:16px" TITLE="Seeking Bar">
-<IMG class="custom-draw level2" ID="posbar">
-<IMG class="custom-draw level3" STYLE="visibility:hidden" ID="seeker">
-</DIV>
-<DIV class="custom-draw level1" STYLE="height:11px;width:68px;top:57px;left:107px" TITLE="Volume Bar">
-<IMG class="custom-draw level1" ID="volumeback">
-<IMG class="custom-draw level2" ID="volumeslider">
-</DIV>
-<DIV class="custom-draw level1" STYLE="height:11px;width:68px;top:57px;left:177px" TITLE="Panning Bar">
-<IMG class="custom-draw level1" ID="balanceback">
-<IMG class="custom-draw level2" ID="balanceslider">
+</script>
+</head>
+<body onLoad="setUp()" onDrag="return(false)" style="overflow:hidden" onMouseUp="document.onRelease();document.onRelease = new Function('')">
+<div class="custom-draw hide nodisplay" style="top:0px;left:0px;">
+  <audio id="playerobj" width="0" height="0" autoplay="false"></audio>
+  <form><input type="file" id="filegrabber"><input type="reset" id="filegrabreset"></form>
+</div>
+<div id="player" class="hide">
+  <img class="custom-draw level2" id="titlebarplayer">
+  <img class="custom-draw level3" id="sysmenuplayer" title="Winamp Menu (Disabled)">
+  <img class="custom-draw level3" id="minimizeplayer" title="Minimize (Disabled)">
+  <img class="custom-draw level3" id="shadeplayer" title="Toggle Windowshade Mode">
+  <img class="custom-draw level3" id="closeplayer" title="Close (Disabled)">
+  <div class="custom-draw hide" style="top:0px;left:0px;" id="smallsection">
+    <div class="custom-draw level3 w68" style="height:11px;top:4px;left:127px;" onMouseDown="elapsedDisplay = !elapsedDisplay;updateAudio()">
+      <img class="custom-draw level3" id="shadedLetter_0">
+      <img class="custom-draw level3" id="shadedLetter_1">
+      <img class="custom-draw level3" id="shadedLetter_2">
+      <img class="custom-draw level3" id="shadedLetter_4">
+      <img class="custom-draw level3" id="shadedLetter_5">
+    </div>
+    <div class="custom-draw level2" style="height:7px;width:17px;top:4px;left:226px;">
+      <img class="custom-draw level2" id="posbarshaded">
+      <img class="custom-draw level3 hide" id="seekershaded">
+    </div>
+    <img class="custom-draw level3" id="backshaded">
+    <img class="custom-draw level3" id="playshaded">
+    <img class="custom-draw level3" id="pauseshaded">
+    <img class="custom-draw level3" id="stopshaded">
+    <img class="custom-draw level3" id="nextshaded">
+    <img class="custom-draw level3" id="ejectshaded">
+  </div>
+  <div class="custom-draw" style="top:0px;left:0px" id="largesection">
+    <div class="custom-draw level1" style="width:50px;height:20px;top:30px;left:200px" id="songinfo"></div>
+    <div class="custom-draw level1" style="height:10px;width:247px;top:72px;left:16px" title="Seeking Bar">
+      <img class="custom-draw level2" id="posbar">
+      <img class="custom-draw level3 hide" id="seeker">
+    </div>
+    <div class="custom-draw level1 w68" style="height:11px;top:57px;left:107px" title="Volume Bar">
+      <img class="custom-draw level1" id="volumeback">
+      <img class="custom-draw level2" id="volumeslider">
+    </div>
+    <div class="custom-draw level1 w68" style="height:11px;top:57px;left:177px" title="Panning Bar">
+      <img class="custom-draw level1" id="balanceback">
+      <img class="custom-draw level2" id="balanceslider">
 
-</DIV>
-<DIV class="custom-draw level1" STYLE="width:155px;height:6px;top:27px;left:111px;font-size:0;clip:rect(0px 154px 6px 0px);visibility:hidden" ID="staticmsg" TITLE="Song Title"></DIV>
-<DIV class="custom-draw level1" STYLE="width:155px;height:6px;top:27px;left:111px;font-size:0;clip:rect(0px 154px 6px 0px);visibility:hidden" ID="staticbase" TITLE="Song Title"></DIV>
-<DIV class="custom-draw level1" STYLE="width:65px;height:13px;top:26px;left:38px" ID="songtime" TITLE="Time Display (click to toggle elapsed/remaining)" onMouseDown="elapsedDisplay = !elapsedDisplay;updateAudio()">
-<IMG class="custom-draw level1" ID="numberpre">
-<IMG class="custom-draw level1" ID="numbermin1">
-<IMG class="custom-draw level1" ID="numbermin2">
-<IMG class="custom-draw level1" ID="numbersec1">
-<IMG class="custom-draw level1" ID="numbersec2">
-</DIV>
-<IMG WIDTH="275" HEIGHT="116" class="custom-draw level0" STYLE="top:0px;left:0px;" ID="mainbg" GALLERYIMG=NO>
-<IMG class="custom-draw level1" ID="previous" TITLE="Previous Track (Disabled)">
-<IMG class="custom-draw level1" ID="play" TITLE="Play">
-<IMG class="custom-draw level1" ID="pause" TITLE="Pause">
-<IMG class="custom-draw level1" ID="stop" TITLE="Stop">
-<IMG class="custom-draw level1" ID="next" TITLE="Next Track (Disabled)">
-<IMG class="custom-draw level1" ID="eject" TITLE="Open file">
-<IMG class="custom-draw level1" ID="equalizerToggle" TITLE="Toggle Graphical Equalizer (Disabled)">
-<IMG class="custom-draw level1" ID="playlistToggle" TITLE="Toggle Playlist Editor (Disabled)">
-<IMG class="custom-draw level1" ID="repeatToggle">
-<IMG class="custom-draw level1" ID="shuffleToggle">
-<IMG class="custom-draw level1" ID="oButton">
-<IMG class="custom-draw level1" ID="aButton">
-<IMG class="custom-draw level1" ID="iButton">
-<IMG class="custom-draw level1" ID="dButton">
-<IMG class="custom-draw level1" ID="vButton">
-<IMG class="custom-draw level1" ID="stereochange">
-<IMG class="custom-draw level1" ID="monochange">
-<IMG class="custom-draw level1" ID="audiodetail">
-<IMG class="custom-draw level1" ID="audiodetail2">
-<IMG class="custom-draw level1" ID="creditsbutton" GALLERYIMG=NO>
-</DIV>
-</DIV>
-</BODY>
-</HTML>
+    </div>
+    <div class="custom-draw level1 w155 hide msgpos" id="staticmsg" title="Song Title"></div>
+    <div class="custom-draw level1 w155 hide msgpos" id="staticbase" title="Song Title"></div>
+    <div class="custom-draw level1" style="width:65px;height:13px;top:26px;left:38px" id="songtime" title="Time Display (click to toggle elapsed/remaining)" onMouseDown="elapsedDisplay = !elapsedDisplay;updateAudio()">
+      <img class="custom-draw level1" id="numberpre">
+      <img class="custom-draw level1" id="numbermin1">
+      <img class="custom-draw level1" id="numbermin2">
+      <img class="custom-draw level1" id="numbersec1">
+      <img class="custom-draw level1" id="numbersec2">
+    </div>
+    <img width="275" height="116" class="custom-draw level0" style="top:0px;left:0px;" id="mainbg" galleryimg=NO>
+    <img class="custom-draw level1" id="previous" title="Previous Track (Disabled)">
+    <img class="custom-draw level1" id="play" title="Play">
+    <img class="custom-draw level1" id="pause" title="Pause">
+    <img class="custom-draw level1" id="stop" title="Stop">
+    <img class="custom-draw level1" id="next" title="Next Track (Disabled)">
+    <img class="custom-draw level1" id="eject" title="Open file">
+    <img class="custom-draw level1" id="equalizerToggle" title="Toggle Graphical Equalizer (Disabled)">
+    <img class="custom-draw level1" id="playlistToggle" title="Toggle Playlist Editor (Disabled)">
+    <img class="custom-draw level1" id="repeatToggle">
+    <img class="custom-draw level1" id="shuffleToggle">
+    <img class="custom-draw level1" id="oButton">
+    <img class="custom-draw level1" id="aButton">
+    <img class="custom-draw level1" id="iButton">
+    <img class="custom-draw level1" id="dButton">
+    <img class="custom-draw level1" id="vButton">
+    <img class="custom-draw level1" id="stereochange">
+    <img class="custom-draw level1" id="monochange">
+    <img class="custom-draw level1" id="audiodetail">
+    <img class="custom-draw level1" id="audiodetail2">
+    <img class="custom-draw level1" id="creditsbutton" galleryimg=NO>
+  </div>
+</div>
+</body>
+</html>
