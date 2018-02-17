@@ -34,6 +34,7 @@ var elapsedDisplay = false
 var extendedNumbers = false
 document.onRelease = new Function("")
 document.title = "Javascript Winamp"
+var title = "";
 var letters = new Object()
 var output = ""
 var offset = 5
@@ -207,6 +208,37 @@ function setUp() {
     detailImage();
     updateAudio()
     player.style.visibility = "visible"
+    
+    var audio = document.querySelector('#playerobj');
+    var filegrabber = document.querySelector('#filegrabber');
+    filegrabber.addEventListener('change', function(e) {
+        var input = e.target;
+        var reader = new FileReader();
+
+        if (input && input.files) {
+            var file = input.files[0];
+            window.onerror = new Function("")
+            title = convertFile(file.name);
+            
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                audio.src = e.target.result;
+                
+                mode = "stop";
+                command("play")
+                
+                songDuration = audio.duration;
+                document.title = title
+                updateTitleStr()
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+function updateTitleStr() {
+    var playTitle = title.toLowerCase() + " (" + convertTime(songDuration, true) + ")"
+    showMsg(playTitle + ((playTitle.length > 30) ? "  ***  " : ""), true)
 }
 
 function windowShade(returnLarge) {
@@ -243,7 +275,6 @@ function changeImage(imageid, clipX, clipY, clipH, clipW, posX, posY, imagesrc) 
     document.all[imageid].style.left = posX - clipX;
     document.all[imageid].style.top = posY - clipY
     document.all[imageid].scanLeft = posX
-    //document.all[imageid].scanTop = posY
 }
 
 function showMsg(msg, isBase) {
@@ -323,7 +354,7 @@ function credits() {
 }
 
 function playerPos() {
-    return ((playerobj.CurrentPosition > 0) ? playerobj.CurrentPosition : 0)
+    return ((playerobj.currentTime > 0) ? playerobj.currentTime : 0)
 
 }
 
@@ -334,6 +365,10 @@ function showMinus() {
 }
 
 function updateAudio() {
+    if(isNaN(songDuration)) {
+        songDuration = document.querySelector('#playerobj').duration;
+        updateTitleStr()
+    }
     if (mode == "stop" || mode == "nofile") {
         if (shaded) {
             for (var uaf = 0; uaf <= 5; uaf++) {
@@ -453,7 +488,7 @@ function setupSeeker() {
     showMsg("seek to:   :  /  :   (");
     updateSeeker(seeker.scanLeft)
     document.onmousemove = new Function("updateSeeker(mousePosX()-(" + (mousePosX() - seeker.scanLeft) + "))")
-    document.onRelease = new Function("changeImage('seeker',248,0,10,29,seeker.scanLeft+278,0);playerobj.CurrentPosition = (seeker.scanLeft/220)*songDuration;document.onmousemove = new Function(\'\');updateAudio();seekingMode = false;restoreText()")
+    document.onRelease = new Function("changeImage('seeker',248,0,10,29,seeker.scanLeft+278,0);playerobj.duration = (seeker.scanLeft/220)*songDuration;document.onmousemove = new Function(\'\');updateAudio();seekingMode = false;restoreText()")
 }
 
 function setupVolume() {
@@ -478,7 +513,7 @@ function setupPlayerDrag() {
 function setupSeekershaded() {
     seekingMode = true
     document.onmousemove = new Function("updateSeekershaded(mousePosX()-(" + (mousePosX() - seekershaded.scanLeft) + "))")
-    document.onRelease = new Function("playerobj.CurrentPosition = ((seekershaded.scanLeft-1)/12)*songDuration;document.onmousemove = new Function('');seekingMode = false")
+    document.onRelease = new Function("playerobj.duration = ((seekershaded.scanLeft-1)/12)*songDuration;document.onmousemove = new Function('');seekingMode = false")
 }
 
 function restoreText() {
@@ -525,6 +560,10 @@ function updateSeeker(seekerChange) {
         seeker.scanLeft = seekPos
         var per = Math.round(100 * ((seekPos - 278) / 220)) + 253
         var changePhrase = ":::::::::" + convertTime(songDuration / (100 / per)) + ":" + convertTime(songDuration) + "::" + per + "%)"
+        
+        var audio = document.querySelector('#playerobj');
+        audio.currentTime = (songDuration / (100 / per));
+        
         for (var usa = 9; usa <= 26; usa++) {
             if (changePhrase.length <= usa) {
                 document.all["staticmsgLetter_" + usa].style.clip = "rect(0px 0px 0px 0px)"
@@ -554,7 +593,12 @@ function updateVolume(volumeChange) {
         changeImage("volumeback", 0, Math.round(27 / (51 / volumeChange)) * 15, 13, 68, 0, 0)
         volumeslider.style.left = volumeChange;
         volumeslider.scanLeft = volumeChange
-        playerobj.Volume = (volumeChange <= 0) ? -10000 : Math.round(5000 * (Math.LOG10E * Math.log((100 / (51 / volumeChange)) + 1)) - 10022)
+        
+        var desiredVolume = (100 / (51 / volumeChange));
+        //console.log('volume changed (%)', desiredVolume);
+        
+        playerobj.volume = desiredVolume/100; // decimal fraction volume...
+        
         var changePhrase = "::::::::" + Math.round(100 / (51 / volumeChange)) + "%"
         for (var uva = 8; uva <= 14; uva++) {
             if (changePhrase.length <= uva) {
@@ -570,6 +614,7 @@ function updateVolume(volumeChange) {
 }
 
 function updateBalance(balanceChange) {
+    return;
     if (!displayStop) {
         displayStop = true;
         setTimeout("displayStop = false")
@@ -668,26 +713,19 @@ function handleError() {
 }
 
 function command(comm, data) {
+    var audio = document.querySelector('#playerobj');
+    if(!audio) {
+        console.error('something went wrong, cannot find audio player tag');
+        return;
+    }            
     switch (comm) {
         case ("eject"):
-            var fileFound = grabFile()
-            if (fileFound) {
-                command("stop")
-                window.onerror = handleError
-                playerobj.Filename = fileFound;
-                mode = "stop";
-                songDuration = Math.floor(playerobj.Duration);
-                command("play")
-                window.onerror = new Function("")
-                var title = convertFile(fileFound);
-                document.title = title
-                title = title.toLowerCase() + " (" + convertTime(songDuration, true) + ")"
-                showMsg(title + ((title.length > 30) ? "  ***  " : ""), true)
-            }
+            grabFile()
             break;
         case ("play"):
+            audio.play();            
+            
             if (mode == "stop" || mode == "pause") {
-                playerobj.Play();
                 mode = "play";
                 detailImage()
                 updateAudio();
@@ -697,56 +735,28 @@ function command(comm, data) {
             }
             break;
         case ("pause"):
-            if (mode == "play") {
-                playerobj.Pause();
-                mode = "pause";
-                detailImage()
-            } else if (mode == "pause") {
-                command("play")
-            }
+            audio.pause();
             break;
         case ("stop"):
-            if (mode == "play" || mode == "pause") {
-                window.onerror = handleError
-                playerobj.Filename = playerobj.Filename
-                window.onerror = new Function("")
-                mode = "stop";
-                detailImage();
-                updateAudio()
-                seeker.style.visibility = "hidden";
-                seekershaded.style.visibility = "hidden"
-                clearInterval(audioTimer)
-            }
+            audio.pause();
+            audio.currentTime = 0;
             break;
         default:
             break
     }
 }
 var acceptedFileTypes = new Array("mp3", "wav", "mp2", "rmi", "mid", "midi")
-
+    
 function grabFile() {
-    document.all.filegrabber.click()
-    var fileFound = document.all.filegrabber.value
-    document.all.filegrabreset.click()
-    if (fileFound != "") {
-        var fileOn = false,
-            fileType = fileFound.substring(fileFound.lastIndexOf(".") + 1, fileFound.length)
-        for (var gfa = 0; gfa <= acceptedFileTypes.length - 1 && fileType.toLowerCase() == acceptedFileTypes[gfa].toLowerCase(); gfa++) {
-            return (fileFound)
-        }
-        return (null)
-    } else {
-        return (null)
-    }
+    var filegrabber = document.querySelector('#filegrabber');
+    filegrabber.click();
+    
 }
 </SCRIPT>
 </HEAD>
 <BODY onLoad="setUp()" onDrag="return(false)" STYLE="overflow:hidden" onMouseUp="document.onRelease();document.onRelease = new Function('')">
 <DIV STYLE="position:absolute;top:0px;left:0px;visibility:hidden;display:none">
-<OBJECT ID="playerobj" WIDTH="0" HEIGHT="0" CLASSID="CLSID:22D6F312-B0F6-11D0-94AB-0080C74C7E95"
-CODEBASE="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701"
-TYPE="application/x-oleobject"><PARAM NAME="AutoStart" VALUE="0"><PARAM NAME="AutoRewind" VALUE="0">
-<PARAM NAME="Filename" VALUE=""><PARAM NAME="PlayCount" VALUE="1"><PARAM NAME="Volume" VALUE="0"></OBJECT>
+<audio src="about:blank" ID="playerobj" WIDTH="0" HEIGHT="0" autoplay="false"></audio>
 <FORM><INPUT TYPE=FILE ID="filegrabber"><INPUT TYPE=RESET ID="filegrabreset"></FORM>
 </DIV>
 <DIV STYLE="width:275px;height:116px;position:absolute;top:0px;left:0px;visibility:hidden;zoom:100%" ID="player">
