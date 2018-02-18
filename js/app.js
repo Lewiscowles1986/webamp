@@ -202,7 +202,7 @@ function setUp() {
     changeImage("monochange", 29, 12, 12, 29, 212, 41, "MONOSTER.BMP")
     showMsg("javascript winamp", true)
     detailImage();
-    updateAudio()
+    //updateAudio()
 
     player.classList.remove('hide');
     player.style = "left:0;top:0;";
@@ -215,7 +215,6 @@ function setUp() {
 
         if (input && input.files) {
             var file = input.files[0];
-            //window.onerror = new Function("")
             title = convertFile(file.name);
 
             var reader = new FileReader();
@@ -234,6 +233,10 @@ function setUp() {
       document.title = title
       updateTitleStr()
     });
+
+    audio.addEventListener('timeupdate', function(e) {
+      updateAudio()
+    })
 }
 
 function updateTitleStr() {
@@ -248,14 +251,14 @@ function windowShade(returnLarge) {
         shaded = false
         changeImage("titlebarplayer", 27, 0, 13, 275, 0, 0);
         changeImage("shadeplayer", 0, 18, 9, 9, 254, 3)
-        updateAudio()
+        //updateAudio()
     } else {
         largesection.classList.add('hide');
         smallsection.classList.remove('hide');
         shaded = true
         changeImage("titlebarplayer", 27, 29, 14, 275, 0, 0);
         changeImage("shadeplayer", 0, 27, 9, 9, 254, 3)
-        updateAudio()
+        //updateAudio()
     }
 }
 
@@ -729,7 +732,7 @@ function command(comm, data) {
                     mode = "play";
                     detailImage()
                     updateAudio();
-                    audioTimer = setInterval("updateAudio()", 200)
+                    //audioTimer = setInterval("updateAudio()", 200)
                     seeker.classList.remove('hide');
                     seekershaded.classList.remove('hide');
                 }
