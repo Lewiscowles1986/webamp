@@ -207,8 +207,8 @@ function setUp() {
     player.classList.remove('hide');
     player.style = "left:0;top:0;";
 
-    var audio = document.querySelector('#playerobj');
-    var filegrabber = document.querySelector('#filegrabber');
+    var audio = getPlayer();
+    var filegrabber = getFileGrabber();
     filegrabber.addEventListener('change', function(e) {
         var input = e.target;
         var reader = new FileReader();
@@ -220,9 +220,10 @@ function setUp() {
             var reader = new FileReader();
             reader.onload = function (e) {
                 audio.src = e.target.result;
-
-                mode = "stop";
-                command("play")
+                setMode('stop');
+                command("play");
+                // reset file upload
+                document.getElementById('filegrabreset').click();
             }
             reader.readAsDataURL(file);
         }
@@ -357,8 +358,8 @@ function credits() {
 }
 
 function playerPos() {
+    var playerobj = getPlayer();
     return ((playerobj.currentTime > 0) ? playerobj.currentTime : 0)
-
 }
 
 function showMinus() {
@@ -369,7 +370,7 @@ function showMinus() {
 
 function updateAudio() {
     if(isNaN(songDuration)) {
-        songDuration = document.querySelector('#playerobj').duration;
+        songDuration = getPlayer().duration;
         updateTitleStr()
     }
     if (mode == "stop" || mode == "nofile") {
@@ -564,7 +565,7 @@ function updateSeeker(seekerChange) {
         var per = Math.round(100 * ((seekPos - 278) / 220)) + 253
         var changePhrase = ":::::::::" + convertTime(songDuration / (100 / per)) + ":" + convertTime(songDuration) + "::" + per + "%)"
 
-        var audio = document.querySelector('#playerobj');
+        var audio = getPlayer();
         audio.currentTime = (songDuration / (100 / per));
 
         for (var usa = 9; usa <= 26; usa++) {
@@ -705,7 +706,7 @@ function convertFile(file) {
 
 function handleError() {
     command("stop");
-    mode = "nofile";
+    setMode("nofile");
     document.title = "Javascript Winamp"
     showMsg("javascript winamp", true);
     showMsg("error");
@@ -715,52 +716,91 @@ function handleError() {
 }
 
 function command(comm, data) {
-    var audio = document.querySelector('#playerobj');
+    var audio = getPlayer();
     if(!audio) {
         console.error('something went wrong, cannot find audio player tag');
         return;
     }
     switch (comm) {
         case ("eject"):
-            grabFile()
+            ejectLogic(audio);
             break;
         case ("play"):
-            if(audio.src.length > 4) {
-                audio.play();
-
-                if (mode == "stop" || mode == "pause") {
-                    mode = "play";
-                    detailImage()
-                    updateAudio();
-                    //audioTimer = setInterval("updateAudio()", 200)
-                    seeker.classList.remove('hide');
-                    seekershaded.classList.remove('hide');
-                }
-            } else {
-                grabFile()
-            }
+            playLogic(audio);
             break;
         case ("pause"):
-            if(!audio.paused) {
-                audio.pause();
-            } else {
-                if(audio.src.length > 4) {
-                    command('play');
-                }
-            }
+            pauseLogic(audio);
             break;
         case ("stop"):
-            audio.pause();
-            audio.currentTime = 0;
+            stopLogic(audio);
             break;
         default:
             break
     }
+    detailImage();
 }
 var acceptedFileTypes = new Array("mp3", "ogg", "wav")
 
-function grabFile() {
-    var filegrabber = document.querySelector('#filegrabber');
-    filegrabber.click();
-
+function showSeeker() {
+    if(!seeker) {
+        console.error('cannot find object seeker in scope');
+    }
+    seeker.classList.remove('hide');
+    seekershaded.classList.remove('hide');
+}
+function setMode(newMode) {
+    mode = newMode;
+}
+function ejectLogic(playerElem) {
+    setMode('nofile');
+    ejectAudio(playerElem);
+    grabFile(getFileGrabber())
+}
+function playLogic(playerElem) {
+    if(isValidSRC(playerElem.src)) {
+        playAudio(playerElem);
+        setMode('play');
+        showSeeker();
+    } else {
+        grabFile(getFileGrabber())
+    }
+}
+function pauseLogic(playerElem) {
+  if(!playerElem.paused) {
+      pauseAudio(playerElem);
+      setMode('pause');
+  } else {
+      if(isValidSRC(playerElem.src)) {
+          command('play');
+      }
+  }
+}
+function stopLogic(playerElem) {
+    stopAudio(playerElem);
+    setMode('stop');
+}
+function isValidSRC(src) {
+    return (src.length > 4)
+}
+function ejectAudio(playerElem) {
+    playerElem.src = '';
+}
+function playAudio(playerElem) {
+    playerElem.play();
+}
+function pauseAudio(playerElem) {
+    playerElem.pause();
+}
+function stopAudio(playerElem) {
+    pauseAudio(playerElem);
+    playerElem.currentTime = 0;
+}
+function getPlayer() {
+    return document.querySelector('#playerobj');
+}
+function getFileGrabber() {
+    return document.querySelector('#filegrabber');
+}
+function grabFile(fileElem) {
+    fileElem.click();
 }
