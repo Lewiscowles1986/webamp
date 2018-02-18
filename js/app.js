@@ -215,7 +215,7 @@ function setUp() {
 
         if (input && input.files) {
             var file = input.files[0];
-            window.onerror = new Function("")
+            //window.onerror = new Function("")
             title = convertFile(file.name);
 
             var reader = new FileReader();
@@ -224,13 +224,15 @@ function setUp() {
 
                 mode = "stop";
                 command("play")
-
-                songDuration = audio.duration;
-                document.title = title
-                updateTitleStr()
             }
             reader.readAsDataURL(file);
         }
+    });
+
+    audio.addEventListener('durationchange', function(e) {
+      songDuration = audio.duration;
+      document.title = title
+      updateTitleStr()
     });
 }
 
