@@ -202,7 +202,6 @@ function setUp() {
     changeImage("monochange", 29, 12, 12, 29, 212, 41, "MONOSTER.BMP")
     showMsg("javascript winamp", true)
     detailImage();
-    //updateAudio()
 
     player.classList.remove('hide');
     player.style = "left:0;top:0;";
@@ -251,15 +250,13 @@ function windowShade(returnLarge) {
         smallsection.classList.add('hide');
         shaded = false
         changeImage("titlebarplayer", 27, 0, 13, 275, 0, 0);
-        changeImage("shadeplayer", 0, 18, 9, 9, 254, 3)
-        //updateAudio()
+        changeImage("shadeplayer", 0, 18, 9, 9, 254, 3);
     } else {
         largesection.classList.add('hide');
         smallsection.classList.remove('hide');
         shaded = true
         changeImage("titlebarplayer", 27, 29, 14, 275, 0, 0);
-        changeImage("shadeplayer", 0, 27, 9, 9, 254, 3)
-        //updateAudio()
+        changeImage("shadeplayer", 0, 27, 9, 9, 254, 3);
     }
 }
 
