@@ -234,13 +234,20 @@ function setUp() {
     });
 
     audio.addEventListener('durationchange', function(e) {
-      songDuration = audio.duration;
-      document.title = title
-      updateTitleStr()
+        songDuration = audio.duration;
+        document.title = title
+        updateTitleStr()
     });
 
     audio.addEventListener('timeupdate', function(e) {
-      updateAudio()
+        updateAudio()
+    })
+
+    audio.addEventListener('ended', function(e) {
+        stopLogic(audio);
+        if(repeatOn) {
+            playLogic(audio);
+        }
     })
 }
 
