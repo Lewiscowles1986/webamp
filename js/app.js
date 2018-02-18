@@ -213,18 +213,22 @@ function setUp() {
         var reader = new FileReader();
 
         if (input && input.files) {
-            var file = input.files[0];
-            title = convertFile(file.name);
+            if(input.files.length > 0) {
+                var file = input.files[0];
+                title = convertFile(file.name);
 
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                audio.src = e.target.result;
-                setMode('stop');
-                command("play");
-                // reset file upload
-                document.getElementById('filegrabreset').click();
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    audio.src = e.target.result;
+                    setMode('play');
+                    detailImage();
+                    // reset file upload
+                    document.getElementById('filegrabreset').click();
+                }
+                reader.readAsDataURL(file);
+            } else {
+                console.info('no files in file input');
             }
-            reader.readAsDataURL(file);
         }
     });
 
@@ -701,15 +705,19 @@ function convertFile(file) {
     return (file.substring(Math.max(file.lastIndexOf("\\"), file.lastIndexOf("/")) + 1, file.lastIndexOf(".")))
 }
 
-function handleError() {
+function stopAndShow(msg) {
     command("stop");
     setMode("nofile");
     document.title = "Javascript Winamp"
     showMsg("javascript winamp", true);
-    showMsg("error");
+    showMsg(msg);
     window.onerror = new Function("");
     setTimeout("restoreText()", 1000)
     return (true)
+}
+
+function handleError() {
+  stopAndShow('error');
 }
 
 function command(comm, data) {
@@ -749,12 +757,13 @@ function setMode(newMode) {
     mode = newMode;
 }
 function ejectLogic(playerElem) {
+    stopAndShow('ejected');
     setMode('nofile');
     ejectAudio(playerElem);
     grabFile(getFileGrabber())
 }
 function playLogic(playerElem) {
-    if(isValidSRC(playerElem.src)) {
+    if(isValidSRC(playerElem.currentSrc)) {
         playAudio(playerElem);
         setMode('play');
         showSeeker();
@@ -767,7 +776,7 @@ function pauseLogic(playerElem) {
       pauseAudio(playerElem);
       setMode('pause');
   } else {
-      if(isValidSRC(playerElem.src)) {
+      if(isValidSRC(playerElem.currentSrc)) {
           command('play');
       }
   }
