@@ -221,6 +221,7 @@ function setUp() {
                 reader.onload = function (e) {
                     audio.src = e.target.result;
                     setMode('play');
+                    showSeeker();
                     detailImage();
                     // reset file upload
                     document.getElementById('filegrabreset').click();
@@ -753,12 +754,20 @@ function showSeeker() {
     seeker.classList.remove('hide');
     seekershaded.classList.remove('hide');
 }
+function hideSeeker() {
+    if(!seeker) {
+        console.error('cannot find object seeker in scope');
+    }
+    seeker.classList.add('hide');
+    seekershaded.classList.add('hide');
+}
 function setMode(newMode) {
     mode = newMode;
 }
 function ejectLogic(playerElem) {
     stopAndShow('ejected');
     setMode('nofile');
+    hideSeeker();
     ejectAudio(playerElem);
     grabFile(getFileGrabber())
 }
@@ -783,6 +792,7 @@ function pauseLogic(playerElem) {
 }
 function stopLogic(playerElem) {
     stopAudio(playerElem);
+    hideSeeker();
     setMode('stop');
 }
 function isValidSRC(src) {
