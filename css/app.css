@@ -1,0 +1,62 @@
+.level0 {
+    z-index: 1;
+}
+.level1 {
+    z-index: 2;
+}
+.level2 {
+    z-index: 3;
+}
+.level3 {
+    z-index: 4;
+}
+.custom-draw {
+    position: absolute;
+}
+.w68 {
+    width:68px;
+}
+.w155 {
+    width:155px;
+}
+.hide {
+    visibility: hidden !important;
+}
+.nodisplay {
+    display: none;
+}
+.msgpos {
+    height:6px;top:27px;left:111px;font-size:0;clip:rect(0px 154px 6px 0px);
+}
+.tl0 {
+  top:0px;left:0px;
+}
+
+#player {
+    width:275px;height:116px;position:absolute;top:0px;left:0px;zoom:1;
+}
+#songtime {
+    width:65px;height:13px;top:26px;left:38px
+}
+#posbarsmall {
+    height:7px;width:17px;top:4px;left:226px;
+}
+#elapsedsmall {
+    height:11px;top:4px;left:127px;
+}
+#seekbarlarge {
+    height:10px;width:247px;top:72px;left:16px;
+}
+#songinfo {
+  width:50px;height:20px;top:30px;left:200px;
+}
+#volumebar {
+  height:11px;top:57px;left:107px
+}
+#panningbar {
+  height:11px;top:57px;left:177px
+}
+
+body {
+  overflow: hidden;
+}
