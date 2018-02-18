@@ -752,7 +752,7 @@ function command(comm, data) {
             break
     }
 }
-var acceptedFileTypes = new Array("mp3", "wav", "mp2", "rmi", "mid", "midi")
+var acceptedFileTypes = new Array("mp3", "ogg", "wav")
 
 function grabFile() {
     var filegrabber = document.querySelector('#filegrabber');
